@@ -1,4 +1,8 @@
-import { BadRequestException, ForbiddenException, Injectable } from "@nestjs/common"
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from "@nestjs/common"
 import { RegisterDto } from "./dto/registerr.dto"
 import { LoginDto } from "./dto/login.dto"
 import { JwtService } from "@nestjs/jwt"
@@ -12,7 +16,7 @@ export class AuthService {
     private prisma: PrismaService,
   ) {}
   // ================= REGISTER =================
-  async register(dto: RegisterDto) {
+  async register(dto: RegisterDto): Promise<{ accessToken: string; refreshToken: string }> {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
     })
@@ -35,14 +39,11 @@ export class AuthService {
 
     await this.updateRefreshToken(user.id, tokens.refreshToken)
 
-    return {
-      data: {...tokens},
-      message: "User registered successfully",
-    }
+    return { ...tokens }
   }
 
   // ================= LOGIN =================
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     })
@@ -61,39 +62,40 @@ export class AuthService {
 
     await this.updateRefreshToken(user.id, tokens.refreshToken)
 
-    return {
-      data: {...tokens},
-      message: "User logged in successfully",
+    return { ...tokens }
+  }
+
+  async googleLogin(email: string, name: string): Promise<{ accessToken: string; refreshToken: string }> {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email },
+    })
+
+    if (!existingUser) {
+      const user = await this.prisma.user.create({
+        data: {
+          email,
+          name,
+        },
+      })
+
+      const tokens = await this.generateTokens(user.id, user.email)
+
+      await this.updateRefreshToken(user.id, tokens.refreshToken)
+
+      return { ...tokens }
+    } else {
+      const tokens = await this.generateTokens(
+        existingUser.id,
+        existingUser.email,
+      )
+
+      await this.updateRefreshToken(existingUser.id, tokens.refreshToken)
+
+      return { ...tokens }
     }
   }
-  async generateTokens(
-    userId: string,
-    email: string,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
-    const payload = { sub: userId, email }
 
-    const accessToken = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_ACCESS_SECRET,
-      expiresIn: "1m",
-    })
-
-    const refreshToken = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: "7d",
-    })
-
-    return { accessToken, refreshToken }
-  }
-
-  async updateRefreshToken(userId: string, refreshToken: string) {
-    const hashed = await bcrypt.hash(refreshToken, 10)
-
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { refreshToken: hashed },
-    })
-  }
-
+  // ================= Refresh token =================
   async refreshTokens(
     userId: string,
     refreshToken: string,
@@ -114,5 +116,34 @@ export class AuthService {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
     }
+  }
+  // ================= Generate token =================
+  async generateTokens(
+    userId: string,
+    email: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const payload = { sub: userId, email }
+
+    const accessToken = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_ACCESS_SECRET,
+      expiresIn: "1m",
+    })
+
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_REFRESH_SECRET,
+      expiresIn: "7d",
+    })
+
+    return { accessToken, refreshToken }
+  }
+
+  // ================= Update refresh token =================
+  async updateRefreshToken(userId: string, refreshToken: string) {
+    const hashed = await bcrypt.hash(refreshToken, 10)
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { refreshToken: hashed },
+    })
   }
 }
