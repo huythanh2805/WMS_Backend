@@ -65,7 +65,7 @@ export class AuthService {
     return { ...tokens }
   }
 
-  async googleLogin(email: string, name: string): Promise<{ accessToken: string; refreshToken: string }> {
+  async googleLogin(email: string, name: string, picture?: string): Promise<{ accessToken: string; refreshToken: string }> {
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
     })
@@ -75,6 +75,7 @@ export class AuthService {
         data: {
           email,
           name,
+          image: picture,
         },
       })
 

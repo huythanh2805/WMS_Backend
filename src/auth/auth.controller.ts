@@ -53,6 +53,7 @@ export class AuthController {
     const tokens = await this.authService.googleLogin(
       req.user.email,
       req.user.name,
+      req.user.picture,
     )
 
     res.cookie("accessToken", tokens.accessToken, {
