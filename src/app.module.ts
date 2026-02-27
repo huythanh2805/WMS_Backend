@@ -8,9 +8,10 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { ProjectModule } from './project/project.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
-  imports: [PrismaModule, UserModule, AuthModule, ConfigModule.forRoot(), WorkspaceModule, ProjectModule],
+  imports: [PrismaModule, UserModule, AuthModule, ConfigModule.forRoot(), WorkspaceModule, ProjectModule, TaskModule],
   controllers: [AppController],
   providers: [AppService],
 })
