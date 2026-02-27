@@ -1,10 +1,10 @@
-import { PrismaService } from 'src/prisma/prisma.service'
-import { FindAllResponse } from 'src/types/common.type'
-import { BaseRepositoryInterface } from './base.interface.respository'
+import { PrismaService } from "src/prisma/prisma.service"
+import { FindAllResponse } from "src/types/common.type"
+import { BaseRepositoryInterface } from "./base.interface.respository"
 
-export abstract class BaseRepositoryAbstract<T>
-  implements BaseRepositoryInterface<T>
-{
+export abstract class BaseRepositoryAbstract<
+  T,
+> implements BaseRepositoryInterface<T> {
   constructor(
     protected readonly prisma: PrismaService,
     protected readonly model: any, // Prisma delegate (e.g prisma.user)
@@ -16,11 +16,10 @@ export abstract class BaseRepositoryAbstract<T>
     })
   }
 
-  async findOneById(id: number, projection?: any): Promise<T> {
+  async findOneById(id: string, projection?: any): Promise<T> {
     return this.model.findFirst({
       where: {
         id,
-        deletedAt: null,
       },
       select: projection,
     })
@@ -33,7 +32,6 @@ export abstract class BaseRepositoryAbstract<T>
     return this.model.findFirst({
       where: {
         ...condition,
-        deletedAt: null,
       },
       select: projection,
     })
@@ -47,10 +45,9 @@ export abstract class BaseRepositoryAbstract<T>
 
     const where = {
       ...condition,
-      deletedAt: null,
     }
 
-    const [data , total] = await Promise.all([
+    const [data, total] = await Promise.all([
       this.model.findMany({
         where,
         skip,
@@ -61,30 +58,17 @@ export abstract class BaseRepositoryAbstract<T>
       this.model.count({ where }),
     ])
 
-    return { items: data, count:total }
+    return { count: total, items: data }
   }
 
-  async update(id: number, dto: Partial<T>): Promise<T> {
+  async update(id: string, dto: Partial<T>): Promise<T> {
     return this.model.update({
       where: { id },
       data: dto,
     })
   }
 
-  async softDelete(id: number): Promise<boolean> {
-    await this.model.update({
-      where: { id },
-      data: {
-        deletedAt: new Date(),
-      },
-    })
-
-    return true
-  }
-
-  async deleteManyByCondition(
-    condition: object = {},
-  ): Promise<boolean> {
+  async deleteManyByCondition(condition: object = {}): Promise<boolean> {
     await this.model.deleteMany({
       where: condition,
     })
@@ -92,7 +76,7 @@ export abstract class BaseRepositoryAbstract<T>
     return true
   }
 
-  async permanentlyDelete(id: number): Promise<boolean> {
+  async permanentlyDelete(id: string): Promise<boolean> {
     await this.model.delete({
       where: { id },
     })

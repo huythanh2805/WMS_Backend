@@ -27,25 +27,27 @@ export class CreateUserDto {
   @MaxLength(100)
   name: string
 
-  // @IsString()
-  // @MinLength(6)
-  // @MaxLength(50)
-  // password: string
+  @IsOptional()
+  @IsString()
+  about?: string | null
 
-  // @IsOptional()
-  // @IsString()
-  // @Matches(/^(0|\+84)[0-9]{9}$/)
-  // phone?: string
+  @IsOptional()
+  @IsString()
+  industryType?: string | null
 
-  // @IsOptional()
-  // @IsString()
-  // avatar?: string
+  @IsOptional()
+  @IsString()
+  roleType?: string | null
 
-  // @IsOptional()
-  // @IsEnum(UserRole)
-  // role?: UserRole
+  @IsOptional()
+  @IsString()
+  country?: string | null
 
-  // @IsOptional()
-  // @IsBoolean()
-  // isActive?: boolean
+  @IsOptional()
+  @IsString()
+  image?: string | null
+
+  @IsOptional()
+  @IsBoolean()
+  onboardingCompleted?: boolean
 }

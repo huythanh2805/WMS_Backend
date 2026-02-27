@@ -19,4 +19,11 @@ export class UserService extends BaseAbstractService<User> {
     }
     return this.userRepository.create(item);
   }
+  async getUserProfile(email: string): Promise<User> {
+    const user = await this.userRepository.findOneByCondition({ email });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
 }

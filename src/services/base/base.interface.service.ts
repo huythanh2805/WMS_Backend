@@ -2,14 +2,14 @@ import { FindAllResponse } from 'src/types/common.type';
 
 export interface Write<T> {
   create(item: T | any): Promise<T>;
-  update(id: number, item: Partial<T>): Promise<T>;
-  remove(id: number): Promise<boolean>;
+  update(id: string, item: Partial<T>): Promise<T>;
+  remove(id: string): Promise<boolean>;
   removeByCondition(filter: Partial<T>): Promise<boolean>;
 }
 
 export interface Read<T> {
   findAll(filter?: object, options?: object): Promise<FindAllResponse<T>>;
-  findOne(id: number): Promise<T>;
+  findOne(id: string): Promise<T>;
   findOneByCondition(filter: Partial<T>): Promise<T>;
 }
 

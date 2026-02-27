@@ -13,18 +13,23 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
   intercept(context: ExecutionContext, next: CallHandler) {
   return next.handle().pipe(
     map((response) => {
+      // Case 1: If the response has a 'data' and "message" property, we assume it's already in the correct format
       if (response?.data !== undefined) {
+        // If the response contains a fiels that we want to exclude it from the data and return it separately
+        const { refreshToken, password, ...rest } = response.data;
         return {
           success: true,
           message: response.message || 'Success',
-          data: response.data,
+          data: rest,
         };
       }
-
+      // Case 2:
+      // If the response contains a fiels that we want to exclude it from the data and return it separately
+      const { refreshToken, password , ...rest } = response;
       return {
         success: true,
         message: 'Success',
-        data: response,
+        data: rest,
       };
     }),
   );

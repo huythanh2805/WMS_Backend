@@ -20,7 +20,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
-
+    console.error('Exception caught by filter:', exception);
     response.status(status).json({
       success: false,
       statusCode: status,

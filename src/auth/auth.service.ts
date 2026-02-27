@@ -16,7 +16,9 @@ export class AuthService {
     private prisma: PrismaService,
   ) {}
   // ================= REGISTER =================
-  async register(dto: RegisterDto): Promise<{ accessToken: string; refreshToken: string }> {
+  async register(
+    dto: RegisterDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
     })
@@ -43,7 +45,9 @@ export class AuthService {
   }
 
   // ================= LOGIN =================
-  async login(dto: LoginDto): Promise<{ accessToken: string; refreshToken: string }> {
+  async login(
+    dto: LoginDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     })
@@ -65,7 +69,11 @@ export class AuthService {
     return { ...tokens }
   }
 
-  async googleLogin(email: string, name: string, picture?: string): Promise<{ accessToken: string; refreshToken: string }> {
+  async googleLogin(
+    email: string,
+    name: string,
+    picture?: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
     })
@@ -127,7 +135,7 @@ export class AuthService {
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_ACCESS_SECRET,
-      expiresIn: "1m",
+      expiresIn: "1d",
     })
 
     const refreshToken = await this.jwtService.signAsync(payload, {
