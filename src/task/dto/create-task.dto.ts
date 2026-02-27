@@ -31,7 +31,6 @@ export class CreateTaskDto {
   @IsInt()
   position: number;
 
-  // Nếu dùng UUID thì đổi thành @IsUUID()
   @IsUUID()
   @IsNotEmpty()
   projectId: string;

@@ -16,7 +16,7 @@ async function bootstrap() {
   }),
 );
   // Config response and error handling
-  app.useGlobalInterceptors(new ResponseInterceptor());
+  // app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
 
   await app.listen(process.env.PORT ?? 5000, () => {

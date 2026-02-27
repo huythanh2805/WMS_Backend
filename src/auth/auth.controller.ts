@@ -13,7 +13,9 @@ import { LoginDto } from "./dto/login.dto"
 import { RefreshDto } from "./dto/refresh.dto"
 import { RegisterDto } from "./dto/registerr.dto"
 import { ConfigService } from "@nestjs/config"
+import { AllowRefreshToken } from "src/decorators/allow-refresh-token.decorator"
 
+@AllowRefreshToken()
 @Controller("auth")
 export class AuthController {
   constructor(
