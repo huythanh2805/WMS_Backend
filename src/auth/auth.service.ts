@@ -55,7 +55,9 @@ export class AuthService {
     if (!user) {
       throw new ForbiddenException("Invalid credentials")
     }
-
+    if(!user.password) {
+      throw new ForbiddenException("Account has been registered with Google")
+    }
     const isMatch = await bcrypt.compare(dto.password, user.password)
 
     if (!isMatch) {
@@ -73,12 +75,14 @@ export class AuthService {
     email: string,
     name: string,
     picture?: string,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string; isFirstTimeLogIn: boolean }> {
+    let isFirstTimeLogIn: boolean = false
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
     })
 
     if (!existingUser) {
+      isFirstTimeLogIn = true
       const user = await this.prisma.user.create({
         data: {
           email,
@@ -91,7 +95,7 @@ export class AuthService {
 
       await this.updateRefreshToken(user.id, tokens.refreshToken)
 
-      return { ...tokens }
+      return { ...tokens, isFirstTimeLogIn }
     } else {
       const tokens = await this.generateTokens(
         existingUser.id,
@@ -100,17 +104,19 @@ export class AuthService {
 
       await this.updateRefreshToken(existingUser.id, tokens.refreshToken)
 
-      return { ...tokens }
+      return { ...tokens, isFirstTimeLogIn: false }
     }
   }
 
   // ================= Refresh token =================
   async refreshTokens(
-    userId: string,
     refreshToken: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
+    const payload = this.jwtService.verify(refreshToken, {
+      secret: process.env.JWT_REFRESH_SECRET,
+    })
     const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: payload.sub },
     })
     if (!user) throw new ForbiddenException()
     const isMatch = await bcrypt.compare(refreshToken, user.refreshToken)
@@ -135,7 +141,7 @@ export class AuthService {
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_ACCESS_SECRET,
-      expiresIn: "1d",
+      expiresIn: "30s",
     })
 
     const refreshToken = await this.jwtService.signAsync(payload, {

@@ -10,7 +10,6 @@ import {
 import { AuthService } from "./auth.service"
 import { AuthGuard } from "@nestjs/passport"
 import { LoginDto } from "./dto/login.dto"
-import { RefreshDto } from "./dto/refresh.dto"
 import { RegisterDto } from "./dto/registerr.dto"
 import { ConfigService } from "@nestjs/config"
 import { AllowRefreshToken } from "src/decorators/allow-refresh-token.decorator"
@@ -36,8 +35,15 @@ export class AuthController {
 
   // Refresh
   @Post("refresh")
-  async refresh(@Body() dto: RefreshDto) {
-    return this.authService.refreshTokens(dto.userId, dto.refreshToken)
+  async refresh(@Req() req, @Res() res) {
+    const httpRefreshToken = req.cookies.refreshToken
+    const tokens = await this.authService.refreshTokens(httpRefreshToken)
+    res.cookie("refreshToken", tokens.refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      path: "/auth/refresh",
+    })
+    return res.json({ accessToken: tokens.accessToken })
   }
 
   // Google
@@ -50,26 +56,21 @@ export class AuthController {
   @Get("google/callback")
   @UseGuards(AuthGuard("google"))
   async googleCallback(@Req() req, @Res() res) {
-    console.log("Google user:", req.user)
-
-    const tokens = await this.authService.googleLogin(
+    const googleLoginResult = await this.authService.googleLogin(
       req.user.email,
       req.user.name,
       req.user.picture,
     )
-
-    res.cookie("accessToken", tokens.accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-    })
-
-    res.cookie("refreshToken", tokens.refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-    })
-
-    return res.redirect(this.configService.get("CLIENT_URL") || "http://localhost:3000" )
+    const { refreshToken, isFirstTimeLogIn } = googleLoginResult
+    const clintUrl = this.configService.get<string>("CLIENT_URL")
+    const redirectUrl = isFirstTimeLogIn ? `${clintUrl}/set-up` : `${clintUrl}/dashboard`
+    res
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        path: "/auth/refresh",
+      })
+      .redirect(redirectUrl)
   }
 }
