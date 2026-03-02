@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
+  HttpException,
   Post,
   Req,
   Res,
@@ -24,24 +26,53 @@ export class AuthController {
 
   // Local login
   @Post("register")
-  async register(@Body() dto: RegisterDto) {
-    return this.authService.register(dto)
+  async register(@Body() dto: RegisterDto, @Res() res) {
+    const tokens = await this.authService.register(dto)
+    res.cookie("refreshToken", tokens.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+    })
+    return res.json({ accessToken: tokens.accessToken })
   }
   // Local login
   @Post("login")
-  async login(@Body() dto: LoginDto) {
-    return this.authService.login(dto)
+  async login(@Body() dto: LoginDto, @Res() res) {
+    const tokens = await this.authService.login(dto)
+    res.cookie("refreshToken", tokens.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+    })
+    return res.json({ accessToken: tokens.accessToken })
+  }
+  @Get("logout")
+  async logout(@Res() res) {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+    })
+    return res.json({ message: "Logged out successfully" })
   }
 
   // Refresh
   @Post("refresh")
   async refresh(@Req() req, @Res() res) {
     const httpRefreshToken = req.cookies.refreshToken
+    if(!httpRefreshToken) throw new ForbiddenException("You must login in first")
     const tokens = await this.authService.refreshTokens(httpRefreshToken)
     res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
-      sameSite: "strict",
-      path: "/auth/refresh",
+      secure: true,
+      sameSite: "none",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
     })
     return res.json({ accessToken: tokens.accessToken })
   }
@@ -63,13 +94,16 @@ export class AuthController {
     )
     const { refreshToken, isFirstTimeLogIn } = googleLoginResult
     const clintUrl = this.configService.get<string>("CLIENT_URL")
-    const redirectUrl = isFirstTimeLogIn ? `${clintUrl}/set-up` : `${clintUrl}/dashboard`
+    const redirectUrl = isFirstTimeLogIn
+      ? `${clintUrl}/onboarding`
+      : `${clintUrl}/dashboard`
     res
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: true,
-        sameSite: "strict",
-        path: "/auth/refresh",
+        sameSite: "none",
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
       })
       .redirect(redirectUrl)
   }

@@ -22,6 +22,12 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
     )
     return next.handle().pipe(
       map((response) => {
+        if(response === null || response === undefined) {
+          return {
+            success: true,
+            message: "Success",
+          }
+        }
         // Case 1: If the response has a 'data' and "message" property, we assume it's already in the correct format
         if (response?.data !== undefined) {
           // If the response contains a fiels that we want to exclude it from the data and return it separately

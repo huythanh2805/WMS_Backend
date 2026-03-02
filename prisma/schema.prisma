@@ -59,14 +59,14 @@ enum SubscriptionStatus {
 
 model User {
   id                     String               @id @default(uuid())
-  name                   String
+  name                   String?
   email                  String               @unique
   password               String?
   refreshToken           String?
   about                  String?
   industryType           String?
   roleType               String?
-  country                String?
+  country                String? 
   image                  String?
   workspaces             WorkspaceMember[]
   tasks                  Task[]               // tasks được assign cho user
