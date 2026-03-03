@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { WorkspaceService } from './workspace.service';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
@@ -10,13 +10,14 @@ export class WorkspaceController {
   constructor(private readonly workspaceService: WorkspaceService) {}
 
   @Post()
-  create(@Body() createWorkspaceDto: CreateWorkspaceDto) {
-    return this.workspaceService.create(createWorkspaceDto);
+  create(@Body() createWorkspaceDto: CreateWorkspaceDto, @Req() req) {
+    console.log('User ID from JWT:', req.user.userId);
+    return this.workspaceService.create({...createWorkspaceDto, ownerId: req.user.userId});
   }
 
   @Get()
-  findAll() {
-    return this.workspaceService.findAll();
+  findAll( @Req() req) {
+    return this.workspaceService.findAllWorkspaces({ownerId: req.user.userId});
   }
 
   @Get(':id')

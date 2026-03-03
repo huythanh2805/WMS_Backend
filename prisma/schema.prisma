@@ -111,7 +111,7 @@ model WorkspaceMember {
   @@unique([userId, workspaceId])
 }
 
-// ────────────────────────────────────────────────
+// ────────────────────────────────────────────────pw
 
 model Project {
   id                String              @id @default(uuid())

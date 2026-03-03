@@ -11,9 +11,5 @@ export class CreateWorkspaceDto {
   
   @IsString()
   @IsNotEmpty()
-  ownerId: string;
-  
-  @IsString()
-  @IsNotEmpty()
   inviteCode: string;
 }

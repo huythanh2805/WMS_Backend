@@ -11,9 +11,10 @@ import { ProjectModule } from './project/project.module';
 import { TaskModule } from './task/task.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { WorkspaceMemberModule } from './workspace-member/workspace-member.module';
 
 @Module({
-  imports: [PrismaModule, UserModule, AuthModule, ConfigModule.forRoot(), WorkspaceModule, ProjectModule, TaskModule],
+  imports: [PrismaModule, UserModule, AuthModule, ConfigModule.forRoot(), WorkspaceModule, ProjectModule, TaskModule, WorkspaceMemberModule],
   controllers: [AppController],
   providers: [AppService, 
     {
