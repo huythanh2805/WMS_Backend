@@ -1,0 +1,13 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    title Chào mừng!
+  body(style="font-family: Arial, sans-serif; padding: 20px;")
+    h1 Xin chào #{name}!
+    p Cảm ơn bạn đã đăng ký tại hệ thống của chúng tôi.
+    if verifyLink
+      p
+        a(href=verifyLink style="background:#007bff; color:white; padding:12px 24px; text-decoration:none; border-radius:6px;") Xác nhận email
+    p Trân trọng,<br>Hệ thống
+    p small © #{year} Your App Name

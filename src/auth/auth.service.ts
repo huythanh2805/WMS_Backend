@@ -8,12 +8,14 @@ import { LoginDto } from "./dto/login.dto"
 import { JwtService } from "@nestjs/jwt"
 import { PrismaService } from "src/prisma/prisma.service"
 import * as bcrypt from "bcrypt"
+import { MailService } from "src/mail/mail.service"
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private prisma: PrismaService,
+    private mailService: MailService,
   ) {}
   // ================= REGISTER =================
   async register(
@@ -39,7 +41,12 @@ export class AuthService {
     const tokens = await this.generateTokens(user.id, user.email)
 
     await this.updateRefreshToken(user.id, tokens.refreshToken)
-
+    // send welcome email with verification link
+    await this.mailService.sendWelcomeMail(
+      dto.email,
+      "Đại ca thanh",
+      "https://example.com/verify?token=abc123",
+    )
     return { ...tokens }
   }
 
@@ -54,7 +61,7 @@ export class AuthService {
     if (!user) {
       throw new ForbiddenException("Invalid credentials")
     }
-    if(!user.password) {
+    if (!user.password) {
       throw new ForbiddenException("Account has been registered with Google")
     }
     const isMatch = await bcrypt.compare(dto.password, user.password)
@@ -74,7 +81,11 @@ export class AuthService {
     email: string,
     name: string,
     picture?: string,
-  ): Promise<{ accessToken: string; refreshToken: string; isFirstTimeLogIn: boolean }> {
+  ): Promise<{
+    accessToken: string
+    refreshToken: string
+    isFirstTimeLogIn: boolean
+  }> {
     let isFirstTimeLogIn: boolean = false
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
