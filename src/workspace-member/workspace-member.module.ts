@@ -6,5 +6,6 @@ import { WorkspaceMemberRepository } from 'src/respositories/workspace-member.re
 @Module({
   controllers: [WorkspaceMemberController],
   providers: [WorkspaceMemberService, WorkspaceMemberRepository],
+  exports: [WorkspaceMemberService]
 })
 export class WorkspaceMemberModule {}

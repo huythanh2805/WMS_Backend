@@ -11,7 +11,6 @@ export class WorkspaceController {
 
   @Post()
   create(@Body() createWorkspaceDto: CreateWorkspaceDto, @Req() req) {
-    console.log('User ID from JWT:', req.user.userId);
     return this.workspaceService.create({...createWorkspaceDto, ownerId: req.user.userId});
   }
 

@@ -3,7 +3,7 @@ import { Type } from "class-transformer";
 import { IsDateString, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class CreateTaskDto {
-      @IsString()
+  @IsString()
   @IsNotEmpty()
   title: string;
 
@@ -29,7 +29,8 @@ export class CreateTaskDto {
 
   @Type(() => Number)
   @IsInt()
-  position: number;
+  @IsOptional()
+  position?: number;
 
   @IsUUID()
   @IsNotEmpty()

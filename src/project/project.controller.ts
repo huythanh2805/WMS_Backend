@@ -14,15 +14,16 @@ export class ProjectController {
     return this.projectService.createProject(createProjectDto);
   }
 
+  @Get(':workspaceId')
+  findProjectsByWorkspaceId(@Param('workspaceId') workspaceId: string) {
+    return this.projectService.findAll({workspaceId});
+  }
+
   @Get()
   findAll() {
     return this.projectService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectService.findOne(id);
-  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {

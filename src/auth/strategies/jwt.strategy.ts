@@ -15,7 +15,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   async validate(payload: any) {
     if (!payload?.sub) {
-      throw new UnauthorizedException()
+      // throw new UnauthorizedException()
+      return
     }
 
     return {

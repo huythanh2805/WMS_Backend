@@ -12,15 +12,16 @@ export class WorkspaceMemberController {
     return this.workspaceMemberService.create(createWorkspaceMemberDto);
   }
 
+  @Get(':workpsaceId')
+  findOne(@Param('workpsaceId') workspaceId: string) {
+    return this.workspaceMemberService.findAll({workspaceId});
+  }
+  
   @Get()
   findAll() {
     return this.workspaceMemberService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.workspaceMemberService.findOne(id);
-  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateWorkspaceMemberDto: UpdateWorkspaceMemberDto) {
