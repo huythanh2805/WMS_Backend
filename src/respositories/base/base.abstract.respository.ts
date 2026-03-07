@@ -69,7 +69,7 @@ export abstract class BaseRepositoryAbstract<
   }
 
   async deleteManyByCondition(condition: object = {}): Promise<boolean> {
-    await this.model.deleteMany({
+     await this.model.deleteMany({
       where: condition,
     })
 

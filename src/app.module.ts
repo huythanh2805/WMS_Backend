@@ -16,6 +16,9 @@ import { MailerModule } from "@nestjs-modules/mailer"
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { MailService } from './mail/mail.service';
 import { join } from "path"
+import { DocumentationModule } from './documentation/documentation.module';
+import { CommentModule } from './comment/comment.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -52,6 +55,9 @@ import { join } from "path"
       }),
       inject: [ConfigService],
     }),
+    DocumentationModule,
+    CommentModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [

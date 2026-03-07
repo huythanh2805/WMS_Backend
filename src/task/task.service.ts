@@ -19,7 +19,14 @@ export class TaskService extends BaseAbstractService<Task> {
     try {
       return this.taskRepository.findAll(filter)
     } catch (error) {
-      throw new HttpException("Failed to retrieve workspace-members", 500)
+      throw new HttpException("Failed to retrieve task", 500)
+    }
+  }
+  async update(id: string, item: Partial<Task>): Promise<Task> {
+    try {
+      return this.taskRepository.update(id, item)
+    } catch (error) {
+      throw new HttpException("Failed to update task", 500)
     }
   }
 }

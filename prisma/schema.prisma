@@ -162,6 +162,8 @@ model Task {
   project       Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
   assignedTo    User?        @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
   attachments   File[]
+  documentations   Documentation[]
+  comments   Comment[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 }
@@ -187,7 +189,9 @@ model Comment {
   content     String
   projectId   String
   userId      String
+  taskId      String
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -218,7 +222,9 @@ model Documentation {
   id          String   @id @default(uuid())
   content     String
   projectId   String   @unique
+  taskId      String
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
   updatedBy   String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
