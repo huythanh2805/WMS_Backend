@@ -1,7 +1,7 @@
 import { PrismaService } from "src/prisma/prisma.service"
 import { BaseRepositoryAbstract } from "./base/base.abstract.respository"
 import { $Enums, Task } from "@prisma/client"
-import { Injectable } from "@nestjs/common"
+import { Injectable, NotFoundException } from "@nestjs/common"
 import { TaskInterface } from "src/task/interfaces/task.interface"
 import { FindAllResponse } from "src/types/common.type"
 
@@ -27,6 +27,26 @@ export class TaskRepository
       count: tasks.length,
       items: tasks,
     }
+  }
+  async findTaskById(id: string, projection?: any): Promise<Task | null> {
+    return this.prisma.task.findFirst({
+      where: {
+        id,
+      },
+      include: {
+        comments: {
+          orderBy: {
+         createdAt: 'desc',
+       },
+        include: {
+          user: true,
+        },
+      },
+        documentation: true,
+        attachments: true,
+        assignedTo: true
+      },
+    })
   }
 
   async update(id: string, dto: Partial<Task>): Promise<Task> {

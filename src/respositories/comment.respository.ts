@@ -9,4 +9,13 @@ export class CommentRepository extends BaseRepositoryAbstract<Comment> implement
   constructor(protected readonly prisma: PrismaService) {
     super(prisma, prisma.comment)
 }
+ async create(dto: Comment ): Promise<Comment> {
+    return this.prisma.comment.create({
+      data: dto,
+      include: {
+        user: true
+      }
+    })
+  }
+
 }
