@@ -19,6 +19,7 @@ import { join } from "path"
 import { DocumentationModule } from './documentation/documentation.module';
 import { CommentModule } from './comment/comment.module';
 import { FileModule } from './file/file.module';
+import { ActivityModule } from './activity/activity.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { FileModule } from './file/file.module';
     DocumentationModule,
     CommentModule,
     FileModule,
+    ActivityModule,
   ],
   controllers: [AppController],
   providers: [

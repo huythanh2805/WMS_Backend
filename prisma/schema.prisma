@@ -54,6 +54,11 @@ enum SubscriptionStatus {
   EXPIRED
   PAST_DUE
 }
+enum ActivityType {
+  POST
+  UPDATE
+  DELETE
+}
 
 // ────────────────────────────────────────────────
 
@@ -206,7 +211,7 @@ model Comment {
 
 model Activity {
   id          String   @id @default(cuid())
-  type        String
+  type        ActivityType
   description String
   projectId   String
   userId      String
