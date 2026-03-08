@@ -48,6 +48,7 @@ export class ProjectRepository
         total: workspaceDetail?.members?.length || 0,
         percent: 100
       },
+      project: projectDetail,
       ...projectOverview
     }
   }

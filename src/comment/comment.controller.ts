@@ -17,6 +17,11 @@ export class CommentController {
     return this.commentService.findAll();
   }
 
+  @Get('project/:projectId')
+  findLatestCommentsByProjectId(@Param('projectId') projectId: string) {
+    return this.commentService.findLatestCommentsByProjectId(projectId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.commentService.findOne(id);

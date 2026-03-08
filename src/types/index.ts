@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, Project } from "@prisma/client";
 
 export type ProjectDetail = Prisma.ProjectGetPayload<{
   include: {
@@ -16,4 +16,5 @@ export type ProjectOverviewType = {
     taskOverdue: TaskStatusProgress,
     taskNotStarted: TaskStatusProgress,
     members: TaskStatusProgress,
+    project?: Project
 }
