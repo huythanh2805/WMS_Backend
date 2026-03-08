@@ -9,7 +9,7 @@ export class DocumentationController {
 
   @Post()
   create(@Body() createDocumentationDto: CreateDocumentationDto) {
-    return this.documentationService.create(createDocumentationDto);
+    return this.documentationService.createOrUpdate(createDocumentationDto);
   }
 
   @Get()

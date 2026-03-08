@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString, IsUUID } from "class-validator";
+import { IsEnum, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
 import { FileType } from "@prisma/client";
 
 export class CreateFileDto {
@@ -15,6 +15,9 @@ export class CreateFileDto {
   @IsOptional()
   @IsUUID()
   projectId?: string;
+
+  @IsNumber()
+  size?: number
 
   @IsEnum(FileType)
   type: FileType;
