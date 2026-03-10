@@ -15,5 +15,5 @@ export class CreateWorkspaceDto {
 
   @IsUUID()
   @IsOptional()
-  ownerId?: string
+  ownerId: string
 }

@@ -9,7 +9,6 @@ import { CreateWorkspaceDto } from "./dto/create-workspace.dto"
 export class WorkspaceService extends BaseAbstractService<Workspace> {
   constructor(
     private readonly workspaceRepository: WorkspaceRepository,
-    private readonly WorkspaceMemberRepository: WorkspaceMemberRepository,
   ) {
     super(workspaceRepository)
   }
@@ -24,15 +23,9 @@ export class WorkspaceService extends BaseAbstractService<Workspace> {
       throw new HttpException("Failed to retrieve workspaces", 500)
     }
   }
-  async create(createDto: CreateWorkspaceDto): Promise<Workspace> {
+  async createNewWorkSpace(createDto: CreateWorkspaceDto): Promise<Workspace> {
     try {
-      const newWorkSpace = await this.workspaceRepository.create(createDto)
-      await this.WorkspaceMemberRepository.create({
-        userId: newWorkSpace.ownerId,
-        workspaceId: newWorkSpace.id,
-        accessLevel: AccessLevel.OWNER,
-      })
-      return newWorkSpace
+      return this.workspaceRepository.createNewWorkspace(createDto)
     } catch (error) {
       throw new HttpException("Failed to retrieve workspaces", 500)
     }

@@ -74,7 +74,7 @@ export class ProjectRepository
     });
 
     // 5. Tạo activity
-    await tx.activity.create({  // Giả sử activityRepository dùng prisma.activity
+    await tx.activity.create({  
       data: {
         type: ActivityType.POST,
         description: `Project "${newProject.name}" created`,
@@ -83,13 +83,11 @@ export class ProjectRepository
       },
     });
 
-    // Nếu mọi thứ OK → return project
     return newProject;
   }, {
     // Optional: tăng timeout nếu logic phức tạp hơn sau này (mặc định 5000ms)
     // maxWait: 5000,    // thời gian chờ tx (ms)
     timeout: 10000,      // thời gian tx tối đa (ms)
-    // isolationLevel: Prisma.TransactionIsolationLevel.Serializable, // nếu cần tránh race condition cao
   });
 }
   async getProjectOverview({

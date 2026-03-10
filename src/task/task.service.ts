@@ -1,19 +1,20 @@
-import { HttpException, Injectable, NotFoundException } from "@nestjs/common"
+import { HttpException, Injectable, NotFoundException, UseGuards } from "@nestjs/common"
 import { CreateTaskDto } from "./dto/create-task.dto"
-import { UpdateTaskDto } from "./dto/update-task.dto"
 import { Task } from "./entities/task.entity"
 import { BaseAbstractService } from "src/services/base/base.abstract.service"
 import { TaskRepository } from "src/respositories/task.respository"
 import { FindAllResponse } from "src/types/common.type"
+import { JwtAuthGuard } from "src/auth/guards/jwt.guard"
 
+@UseGuards(JwtAuthGuard)
 @Injectable()
 export class TaskService extends BaseAbstractService<Task> {
   constructor(private readonly taskRepository: TaskRepository) {
     super(taskRepository)
   }
-  async createNewTask (createDto: CreateTaskDto): Promise<Task> {
+  async createNewTask (createDto: CreateTaskDto, userId: string): Promise<Task> {
     try {
-      return this.taskRepository.createNewTask(createDto)
+      return this.taskRepository.createNewTask(createDto, userId)
     } catch (error) {
       throw new HttpException("Create New Task Error", 500)
       
@@ -29,9 +30,9 @@ export class TaskService extends BaseAbstractService<Task> {
       throw new HttpException("Failed to retrieve task", 500)
     }
   }
-  async update(id: string, item: Partial<Task>): Promise<Task> {
+  async updateTask(id: string, item: Partial<Task>, userId: string): Promise<Task> {
     try {
-      return this.taskRepository.update(id, item)
+      return this.taskRepository.updateTask(id, item, userId)
     } catch (error) {
       throw new HttpException("Failed to update task", 500)
     }

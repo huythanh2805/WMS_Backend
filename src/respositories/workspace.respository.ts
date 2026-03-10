@@ -1,9 +1,10 @@
 import { PrismaService } from "src/prisma/prisma.service"
 import { BaseRepositoryAbstract } from "./base/base.abstract.respository"
-import { User, Workspace } from "@prisma/client"
+import { AccessLevel, ActivityType, User, Workspace } from "@prisma/client"
 import { UserInterface } from "src/user/interfaces/user.interface"
-import { Injectable } from "@nestjs/common"
+import { HttpException, Injectable } from "@nestjs/common"
 import { WorkspaceInterface } from "src/workspace/interfaces/workspace.interface"
+import { CreateWorkspaceDto } from "src/workspace/dto/create-workspace.dto"
 
 @Injectable()
 export class WorkspaceRepository
@@ -13,7 +14,45 @@ export class WorkspaceRepository
   constructor(protected readonly prisma: PrismaService) {
     super(prisma, prisma.workspace)
   }
-  async findAllWorkSpaces(ownerId: string): Promise<{ count: number; items: Workspace[] }> {
+  async createNewWorkspace(createDto: CreateWorkspaceDto): Promise<Workspace> {
+  try {
+    const result = await this.prisma.$transaction(async (tx) => {
+      // 1. Tạo workspace
+      const newWorkSpace = await tx.workspace.create({
+        data: {
+          ...createDto,
+        },
+      });
+
+      // 2. Thêm owner vào workspaceMember
+      await tx.workspaceMember.create({
+        data: {
+          userId: newWorkSpace.ownerId,
+          workspaceId: newWorkSpace.id,
+          accessLevel: AccessLevel.OWNER,
+        },
+      });
+
+      // 3. Tạo activity
+      await tx.activity.create({
+        data: {
+          type: ActivityType.POST,
+          description: `Workspace "${newWorkSpace.name}" created`,
+          userId: newWorkSpace.ownerId,
+        },
+      });
+
+      return newWorkSpace;
+    });
+
+    return result;
+  } catch (error: any) {
+    throw new HttpException(error?.message || "Create workspace failed", 500);
+  }
+}
+  async findAllWorkSpaces(
+    ownerId: string,
+  ): Promise<{ count: number; items: Workspace[] }> {
     const workspaces = await this.prisma.workspace.findMany({
       where: {
         OR: [
