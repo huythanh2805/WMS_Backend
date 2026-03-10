@@ -13,7 +13,7 @@ export class WorkspaceMemberRepository
   constructor(protected readonly prisma: PrismaService) {
     super(prisma, prisma.workspaceMember)
   }
-  async findAll(
+  async findAllByWorkspaceId(
     condition?: any,
     options?: any,
   ): Promise<FindAllResponse<WorkspaceMember>> {
@@ -21,6 +21,7 @@ export class WorkspaceMemberRepository
       where: condition,
       include: {
         user: true,
+        projectAccess: true
       },
     })
     return {

@@ -14,7 +14,7 @@ export class WorkspaceMemberController {
 
   @Get(':workpsaceId')
   findOne(@Param('workpsaceId') workspaceId: string) {
-    return this.workspaceMemberService.findAll({workspaceId});
+    return this.workspaceMemberService.findAllByWorkspaceId({workspaceId});
   }
   
   @Get()

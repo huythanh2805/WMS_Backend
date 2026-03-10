@@ -10,7 +10,6 @@ import { ProjectOverviewType } from "src/types"
 export class ProjectService extends BaseAbstractService<Project> {
   constructor(
     private readonly projectRepository: ProjectRepository,
-    private readonly activityRepository: ActivityRepository,
   ) {
     super(projectRepository)
   }
@@ -19,21 +18,7 @@ export class ProjectService extends BaseAbstractService<Project> {
     userId: string,
   ): Promise<Project> {
     try {
-      const existingProject = await this.projectRepository.findOneByCondition({
-        name: item.name,
-      })
-      if (existingProject) {
-        throw new ConflictException("Project with this name already exists")
-      }
-      const newProject = await this.projectRepository.create(item)
-      // Create activity
-      await this.activityRepository.create({
-        type: ActivityType.POST,
-        description: `Project "${newProject.name}" created`,
-        userId: userId,
-        projectId: newProject.id,
-      })
-      return newProject
+     return this.projectRepository.createNewProject(item, userId)
     } catch (error) {
       throw new HttpException("Create Project Error", 500)
     }

@@ -12,12 +12,11 @@ export class WorkspaceMemberService extends BaseAbstractService<WorkspaceMember>
     super(workspaceMemberRepository)
   }
 
-  async findAll(filter?: object, options?: object): Promise<FindAllResponse<WorkspaceMember>> {
+  async findAllByWorkspaceId(filter?: object, options?: object): Promise<FindAllResponse<WorkspaceMember>> {
     try {
-      return this.workspaceMemberRepository.findAll(filter)
+      return this.workspaceMemberRepository.findAllByWorkspaceId(filter)
     } catch (error) {
       throw new HttpException("Failed to retrieve workspace-members", 500)
-
     }
   }
 }
