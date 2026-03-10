@@ -11,7 +11,14 @@ export class TaskService extends BaseAbstractService<Task> {
   constructor(private readonly taskRepository: TaskRepository) {
     super(taskRepository)
   }
-
+  async createNewTask (createDto: CreateTaskDto): Promise<Task> {
+    try {
+      return this.taskRepository.createNewTask(createDto)
+    } catch (error) {
+      throw new HttpException("Create New Task Error", 500)
+      
+    }
+  }
   async findAll(
     filter?: object,
     options?: object,

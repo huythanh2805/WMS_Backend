@@ -20,7 +20,7 @@ export class TaskController {
 
   @Post()
   create(@Body() createTaskDto: CreateTaskDto) {
-    return this.taskService.create(createTaskDto)
+    return this.taskService.createNewTask(createTaskDto)
   }
 
   @Get()

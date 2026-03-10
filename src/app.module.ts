@@ -13,13 +13,14 @@ import { APP_INTERCEPTOR } from "@nestjs/core"
 import { ResponseInterceptor } from "./common/interceptors/response.interceptor"
 import { WorkspaceMemberModule } from "./workspace-member/workspace-member.module"
 import { MailerModule } from "@nestjs-modules/mailer"
-import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
-import { MailService } from './mail/mail.service';
+import { PugAdapter } from "@nestjs-modules/mailer/dist/adapters/pug.adapter"
+import { MailService } from "./mail/mail.service"
 import { join } from "path"
-import { DocumentationModule } from './documentation/documentation.module';
-import { CommentModule } from './comment/comment.module';
-import { FileModule } from './file/file.module';
-import { ActivityModule } from './activity/activity.module';
+import { DocumentationModule } from "./documentation/documentation.module"
+import { CommentModule } from "./comment/comment.module"
+import { FileModule } from "./file/file.module"
+import { ActivityModule } from "./activity/activity.module"
+import { InvitationModule } from "./invitation/invitation.module"
 
 @Module({
   imports: [
@@ -35,19 +36,19 @@ import { ActivityModule } from './activity/activity.module';
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => ({
         transport: {
-          host: config.get('MAIL_HOST'),  
-          port: config.get('MAIL_PORT'),          
-          secure: config.get('MAIL_SECURE') === 'true', 
+          host: config.get("MAIL_HOST"),
+          port: config.get("MAIL_PORT"),
+          secure: config.get("MAIL_SECURE") === "true",
           auth: {
-            user: config.get('MAIL_USER'),
-            pass: config.get('MAIL_PASS'),        
+            user: config.get("MAIL_USER"),
+            pass: config.get("MAIL_PASS"),
           },
         },
         defaults: {
-          from: `"No Reply" <${config.get('MAIL_FROM')}>`,
+          from: `"No Reply" <${config.get("MAIL_FROM")}>`,
         },
         template: {
-         dir: join(process.cwd(), 'dist', 'templates'), 
+          dir: join(process.cwd(), "dist", "templates"),
           adapter: new PugAdapter(),
           options: {
             strict: true,
@@ -60,6 +61,7 @@ import { ActivityModule } from './activity/activity.module';
     CommentModule,
     FileModule,
     ActivityModule,
+    InvitationModule,
   ],
   controllers: [AppController],
   providers: [

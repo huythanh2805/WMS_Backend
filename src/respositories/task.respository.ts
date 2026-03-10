@@ -4,6 +4,7 @@ import { $Enums, Task } from "@prisma/client"
 import { Injectable, NotFoundException } from "@nestjs/common"
 import { TaskInterface } from "src/task/interfaces/task.interface"
 import { FindAllResponse } from "src/types/common.type"
+import { CreateTaskDto } from "src/task/dto/create-task.dto"
 
 @Injectable()
 export class TaskRepository
@@ -13,6 +14,27 @@ export class TaskRepository
   constructor(protected readonly prisma: PrismaService) {
     super(prisma, prisma.task)
   }
+  async createNewTask(createDto: CreateTaskDto): Promise<Task> {
+    const largestPositionTask = await this.prisma.task.findFirst({
+      where: {
+        status: createDto.status, // lấy trong cùng column
+      },
+      orderBy: {
+        position: "desc",
+      },
+    })
+
+    const position = largestPositionTask
+      ? largestPositionTask.position + 1000
+      : 1000
+
+    return this.prisma.task.create({
+      data: {
+        ...createDto,
+        position,
+      },
+    })
+  }
   async findAll(
     condition?: any,
     options?: any,
@@ -21,6 +43,9 @@ export class TaskRepository
       where: condition,
       include: {
         assignedTo: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     })
     return {
@@ -36,15 +61,15 @@ export class TaskRepository
       include: {
         comments: {
           orderBy: {
-         createdAt: 'desc',
-       },
-        include: {
-          user: true,
+            createdAt: "desc",
+          },
+          include: {
+            user: true,
+          },
         },
-      },
         documentation: true,
         attachments: true,
-        assignedTo: true
+        assignedTo: true,
       },
     })
   }

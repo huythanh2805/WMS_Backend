@@ -41,12 +41,6 @@ export class AuthService {
     const tokens = await this.generateTokens(user.id, user.email)
 
     await this.updateRefreshToken(user.id, tokens.refreshToken)
-    // send welcome email with verification link
-    await this.mailService.sendWelcomeMail(
-      dto.email,
-      "Đại ca thanh",
-      "https://example.com/verify?token=abc123",
-    )
     return { ...tokens }
   }
 

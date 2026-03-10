@@ -16,15 +16,16 @@ export class MailService {
   }
 
   // Gửi email dùng template
-  async sendWelcomeMail(to: string, name: string, verifyLink?: string) {
+  async sendMailWithTemplate({to, link, from}: {to: string, link: string, from: string}) {
     await this.mailerService.sendMail({
       to,
-      from: 'noreply@yourapp.com', // override nếu cần
-      subject: 'Chào mừng bạn đến với ứng dụng!',
+      from,
+      subject: 'Bạn có một lời mời từ WMS',
       template: './index.pug', 
       context: {
-        name,
-        verifyLink,
+        link,
+        to,
+        from,
         year: new Date().getFullYear(),
       },
     });

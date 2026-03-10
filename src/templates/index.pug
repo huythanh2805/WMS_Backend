@@ -4,10 +4,10 @@ html
     meta(charset='utf-8')
     title Chào mừng!
   body(style="font-family: Arial, sans-serif; padding: 20px;")
-    h1 Xin chào #{name}!
-    p Cảm ơn bạn đã đăng ký tại hệ thống của chúng tôi.
-    if verifyLink
+    h1 Xin chào #{to}!
+    p Bạn có lời mời từ #{from} tham gia
+    if link
       p
-        a(href=verifyLink style="background:#007bff; color:white; padding:12px 24px; text-decoration:none; border-radius:6px;") Xác nhận email
+        a(href=link style="background:#007bff; color:white; padding:12px 24px; text-decoration:none; border-radius:6px;") Xác nhận
     p Trân trọng,<br>Hệ thống
-    p small © #{year} Your App Name
+    p small © #{year} Your WMS

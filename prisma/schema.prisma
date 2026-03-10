@@ -59,6 +59,11 @@ enum ActivityType {
   UPDATE
   DELETE
 }
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+}
 
 // ────────────────────────────────────────────────
 
@@ -73,6 +78,7 @@ model User {
   roleType               String?
   country                String? 
   image                  String?
+  invitations            Invitation[]
   workspaces             WorkspaceMember[]
   tasks                  Task[]               // tasks được assign cho user
   activities             Activity[]
@@ -94,6 +100,7 @@ model Workspace {
   inviteCode      String            @unique
   inviteAt        DateTime?         @default(now())
   members         WorkspaceMember[]
+  invitations     Invitation[]
   projects        Project[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
@@ -162,7 +169,7 @@ model Task {
   priority      TaskPriority @default(LOW)
   startDate     DateTime?
   dueDate       DateTime?
-  position      Int?         @default(1) // để drag & drop sắp xếp
+  position      Int         
   projectId     String
   assigneeId    String?
   attachments   File[]
@@ -258,4 +265,26 @@ model Subscription {
   updatedAt               DateTime             @updatedAt
 
   @@index([userId])
+}
+// ────────────────────────────────────────────────
+model Invitation {
+  id          String @id @default(uuid())
+
+  email       String
+  token       String @unique
+
+  workspaceId String
+  invitedById String?
+
+  accessLevel  AccessLevel  @default(MEMBER)
+  status InvitationStatus @default(PENDING)
+
+  expiresAt DateTime
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  invitedBy User? @relation(fields: [invitedById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([email])
 }
