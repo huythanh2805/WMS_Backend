@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   Get,
   HttpException,
+  Logger,
   Post,
   Req,
   Res,
@@ -19,6 +20,7 @@ import { AllowRefreshToken } from "src/decorators/allow-refresh-token.decorator"
 @AllowRefreshToken()
 @Controller("auth")
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
   constructor(
     private authService: AuthService,
     private configService: ConfigService,
@@ -30,8 +32,8 @@ export class AuthController {
     const tokens = await this.authService.register(dto)
     res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
     })
@@ -43,8 +45,8 @@ export class AuthController {
     const tokens = await this.authService.login(dto)
     res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
     })
@@ -54,8 +56,8 @@ export class AuthController {
   async logout(@Res() res) {
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
     })
     return res.json({ message: "Logged out successfully" })
@@ -65,12 +67,13 @@ export class AuthController {
   @Post("refresh")
   async refresh(@Req() req, @Res() res) {
     const httpRefreshToken = req.cookies.refreshToken
-    if(!httpRefreshToken) throw new ForbiddenException("You must login in first")
+    if (!httpRefreshToken)
+      throw new ForbiddenException("You must login in first")
     const tokens = await this.authService.refreshTokens(httpRefreshToken)
     res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
     })
@@ -81,6 +84,7 @@ export class AuthController {
   @Get("google")
   @UseGuards(AuthGuard("google"))
   googleLogin() {
+    this.logger.debug("This is google login")
     console.log("Initiating Google login")
   }
 
@@ -97,11 +101,13 @@ export class AuthController {
     const redirectUrl = isFirstTimeLogIn
       ? `${clintUrl}/onboarding`
       : `${clintUrl}/dashboard`
-    res
+      this.logger.debug("This is google call back")
+      this.logger.debug({refreshToken})
+   await res
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
       })
