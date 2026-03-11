@@ -32,16 +32,6 @@ export class WorkspaceRepository
             accessLevel: AccessLevel.OWNER,
           },
         })
-
-        // 3. Tạo activity
-        await tx.activity.create({
-          data: {
-            type: ActivityType.POST,
-            description: `Workspace "${newWorkSpace.name}" created`,
-            userId: newWorkSpace.ownerId,
-          },
-        })
-
         return newWorkSpace
       })
 

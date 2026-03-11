@@ -47,11 +47,12 @@ export class AuthService {
   // ================= LOGIN =================
   async login(
     dto: LoginDto,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string, isFirstTimeLogIn: boolean }> {
+    let isFirstTimeLogIn = false
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     })
-
+    if(user) isFirstTimeLogIn = true
     if (!user) {
       throw new ForbiddenException("Invalid credentials")
     }
@@ -68,7 +69,7 @@ export class AuthService {
 
     await this.updateRefreshToken(user.id, tokens.refreshToken)
 
-    return { ...tokens }
+    return { ...tokens, isFirstTimeLogIn }
   }
 
   async googleLogin(

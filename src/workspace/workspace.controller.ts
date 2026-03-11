@@ -11,7 +11,7 @@ export class WorkspaceController {
 
   @Post()
   create(@Body() createWorkspaceDto: CreateWorkspaceDto, @Req() req) {
-    return this.workspaceService.create({...createWorkspaceDto, ownerId: req.user.userId});
+    return this.workspaceService.createNewWorkSpace({...createWorkspaceDto, ownerId: req.user.userId});
   }
 
   @Get()
