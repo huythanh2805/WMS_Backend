@@ -21,7 +21,7 @@ export class WorkspaceController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.workspaceService.findOne(id);
+    return this.workspaceService.findOneByCondition({id}, {projects: true});
   }
 
   @Patch(':id')
@@ -30,7 +30,7 @@ export class WorkspaceController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.workspaceService.remove(id);
+  deleteWorkspaceById(@Param('id') id: string) {
+    return this.workspaceService.deleteWorkspaceById(id);
   }
 }

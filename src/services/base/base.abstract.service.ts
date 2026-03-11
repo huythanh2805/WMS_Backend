@@ -34,7 +34,11 @@ export abstract class BaseAbstractService<
     return this.repository.findOneById(id)
   }
 
-  async findOneByCondition(filter: Partial<T>): Promise<T> {
-    return this.repository.findOneByCondition(filter)
+  async findOneByCondition(
+    filter: Partial<T>,
+    include?: any,
+    projection?: any,
+  ): Promise<T> {
+    return this.repository.findOneByCondition(filter, projection, include)
   }
 }

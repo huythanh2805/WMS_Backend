@@ -21,6 +21,7 @@ import { CommentModule } from "./comment/comment.module"
 import { FileModule } from "./file/file.module"
 import { ActivityModule } from "./activity/activity.module"
 import { InvitationModule } from "./invitation/invitation.module"
+import { ProjectAccessModule } from './project-access/project-access.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { InvitationModule } from "./invitation/invitation.module"
     FileModule,
     ActivityModule,
     InvitationModule,
+    ProjectAccessModule,
   ],
   controllers: [AppController],
   providers: [

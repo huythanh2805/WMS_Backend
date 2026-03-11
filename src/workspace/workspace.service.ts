@@ -30,4 +30,11 @@ export class WorkspaceService extends BaseAbstractService<Workspace> {
       throw new HttpException("Failed to retrieve workspaces", 500)
     }
   }
+  async deleteWorkspaceById(id: string): Promise<Workspace> {
+    try {
+      return this.workspaceRepository.deleteWorkspaceById(id)
+    } catch (error) {
+      throw new HttpException("Failed to delete workspaces", 500)
+    }
+  }
 }

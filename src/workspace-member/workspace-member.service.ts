@@ -19,4 +19,11 @@ export class WorkspaceMemberService extends BaseAbstractService<WorkspaceMember>
       throw new HttpException("Failed to retrieve workspace-members", 500)
     }
   }
+  async deleteWorkspaceMember(id: string): Promise<WorkspaceMember> {
+    try {
+      return this.workspaceMemberRepository.deleteWorkspaceMember(id)
+    } catch (error) {
+      throw new HttpException("Failed to delete workspace-members", 500)
+    }
+  }
 }

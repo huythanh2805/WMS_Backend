@@ -28,12 +28,14 @@ export abstract class BaseRepositoryAbstract<
   async findOneByCondition(
     condition: object = {},
     projection?: any,
+    include?: any,
   ): Promise<T> {
     return this.model.findFirst({
       where: {
         ...condition,
       },
       select: projection,
+      include: include,
     })
   }
 

@@ -29,7 +29,7 @@ export class WorkspaceMemberController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.workspaceMemberService.remove(id);
+  deleteWorkspaceMember(@Param('id') id: string) {
+    return this.workspaceMemberService.deleteWorkspaceMember(id);
   }
 }
