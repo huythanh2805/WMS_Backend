@@ -35,9 +35,11 @@ export class ProjectController {
   ) {
     return this.projectService.getProjectOverview({ workspaceId, projectId })
   }
+  // Get projects by workspaceId
   @Get(":workspaceId")
-  findProjectsByWorkspaceId(@Param("workspaceId") workspaceId: string) {
-    return this.projectService.findAll({ workspaceId })
+  findProjectsByWorkspaceId(@Param("workspaceId") workspaceId: string, @Req() req) {
+    const userId = req.user.userId
+    return this.projectService.findProjectsByWorkSpaceId( workspaceId , userId)
   }
 
   @Get()

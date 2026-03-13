@@ -6,5 +6,6 @@ import { ProjectAccessRepository } from 'src/respositories/project-access.respos
 @Module({
   controllers: [ProjectAccessController],
   providers: [ProjectAccessService , ProjectAccessRepository],
+  exports: [ProjectAccessService]
 })
 export class ProjectAccessModule {}

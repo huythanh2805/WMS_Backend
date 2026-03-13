@@ -30,8 +30,23 @@ export class ProjectAccessRepository
     return this.prisma.projectAccess.create({
       data: createDto,
       include: {
-        project: true
-      }
+        project: true,
+      },
     })
+  }
+
+  async findProjectAccessBy(
+    projectId: string,
+    userId: string,
+  ): Promise<ProjectAccess | null> {
+    const projectAccess = await this.prisma.projectAccess.findFirst({
+      where: {
+        projectId,
+        workspaceMember: {
+          userId
+        },
+      },
+    })
+    return projectAccess
   }
 }

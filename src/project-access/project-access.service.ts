@@ -18,4 +18,12 @@ export class ProjectAccessService extends BaseAbstractService<ProjectAccess> {
       
     }
   }
+  async findProjectAccessBy(projectId: string, userId: string):Promise<ProjectAccess | null> {
+    try {
+      return this.projectAccessRespository.findProjectAccessBy(projectId, userId)
+    } catch (error) {
+      throw new HttpException(error.response.message, 500)
+      
+    }
+  }
 }

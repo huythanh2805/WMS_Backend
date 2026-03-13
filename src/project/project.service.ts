@@ -5,6 +5,7 @@ import { ProjectRepository } from "src/respositories/project.respository"
 import { CreateProjectDto } from "./dto/create-project.dto"
 import { ActivityRepository } from "src/respositories/activity.respository"
 import { ProjectOverviewType } from "src/types"
+import { FindAllResponse } from "src/types/common.type"
 
 @Injectable()
 export class ProjectService extends BaseAbstractService<Project> {
@@ -35,6 +36,13 @@ export class ProjectService extends BaseAbstractService<Project> {
     } catch (error) {
       throw new HttpException("Get Project Overview Error", 500)
       
+    }
+  }
+  async findProjectsByWorkSpaceId(workspaceId: string, userId: string): Promise<FindAllResponse<Project>> {
+    try {
+      return this.projectRepository.findProjectsByWorkSpaceId(workspaceId, userId)
+    } catch (error) {
+      throw new HttpException(error.response.message, 500)
     }
   }
 }
