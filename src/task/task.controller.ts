@@ -13,6 +13,7 @@ import { TaskService } from "./task.service"
 import { CreateTaskDto } from "./dto/create-task.dto"
 import { UpdateTaskDto } from "./dto/update-task.dto"
 import { JwtAuthGuard } from "src/auth/guards/jwt.guard"
+import { AccessGuard } from "src/auth/guards/access-level.guard"
 
 @UseGuards(JwtAuthGuard)
 @Controller("task")

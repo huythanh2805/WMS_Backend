@@ -3,8 +3,10 @@ import { ProjectService } from './project.service';
 import { ProjectController } from './project.controller';
 import { ProjectRepository } from 'src/respositories/project.respository';
 import { ActivityRepository } from 'src/respositories/activity.respository';
+import { WorkspaceMemberModule } from 'src/workspace-member/workspace-member.module';
 
 @Module({
+  imports: [WorkspaceMemberModule],
   controllers: [ProjectController],
   providers: [ProjectService, ProjectRepository, ActivityRepository],
 })

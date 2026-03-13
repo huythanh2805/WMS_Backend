@@ -3,12 +3,10 @@ import {
   Controller,
   ForbiddenException,
   Get,
-  HttpException,
   Logger,
   Post,
   Req,
   Res,
-  UnauthorizedException,
   UseGuards,
 } from "@nestjs/common"
 import { AuthService } from "./auth.service"
@@ -76,7 +74,7 @@ export class AuthController {
   @Post("refresh")
   async refresh(@Req() req, @Res() res) {
     const httpRefreshToken = req.cookies.refreshToken
-    this.logger.debug({ httpRefreshToken })
+    // this.logger.debug({ httpRefreshToken })
     if (!httpRefreshToken)
       throw new ForbiddenException("You must login in first")
     const tokens = await this.authService.refreshTokens(httpRefreshToken)
@@ -93,7 +91,7 @@ export class AuthController {
   // Google
   @Get("google")
   @UseGuards(AuthGuard("google"))
-  googleLogin() { }
+  googleLogin() {}
 
   @Get("google/callback")
   @UseGuards(AuthGuard("google"))

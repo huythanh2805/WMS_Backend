@@ -13,13 +13,17 @@ import { ProjectService } from "./project.service"
 import { CreateProjectDto } from "./dto/create-project.dto"
 import { UpdateProjectDto } from "./dto/update-project.dto"
 import { JwtAuthGuard } from "src/auth/guards/jwt.guard"
+import { AccessGuard } from "src/auth/guards/access-level.guard"
+import { Access } from "src/decorators/user-access"
+import { AccessLevel } from "@prisma/client"
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, AccessGuard)
 @Controller("project")
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
-
-  @Post()
+  
+  @Access(AccessLevel.OWNER, AccessLevel.MEMBER)
+  @Post("/:workspaceId")
   create(@Body() createProjectDto: CreateProjectDto, @Req() req) {
     return this.projectService.createProject(createProjectDto, req.user.userId)
   }
