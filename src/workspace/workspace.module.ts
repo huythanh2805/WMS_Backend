@@ -4,9 +4,10 @@ import { WorkspaceController } from './workspace.controller';
 import { WorkspaceRepository } from 'src/respositories/workspace.respository';
 import { WorkspaceMemberModule } from 'src/workspace-member/workspace-member.module';
 import { WorkspaceMemberRepository } from 'src/respositories/workspace-member.respository';
+import { ProjectAccessModule } from 'src/project-access/project-access.module';
 
 @Module({
-  imports: [WorkspaceMemberModule],
+  imports: [WorkspaceMemberModule, ProjectAccessModule],
   controllers: [WorkspaceController],
   providers: [WorkspaceService, WorkspaceRepository, WorkspaceMemberRepository],
 })

@@ -29,6 +29,7 @@ export class AccessGuard implements CanActivate {
     const request = context.switchToHttp().getRequest()
     // You need to pass the workspaceId and projectId in the params for every authorized route.
     const workspaceId = request.params?.workspaceId
+    console.log({workspaceId})
     const projectId = request.params?.projectId
     const user = request.user
     // find exact access level

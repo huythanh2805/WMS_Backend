@@ -7,33 +7,36 @@ import { Access } from 'src/decorators/user-access';
 import { AccessLevel } from '@prisma/client';
 import { AccessGuard } from 'src/auth/guards/access-level.guard';
 
-@UseGuards(JwtAuthGuard )
+@UseGuards(JwtAuthGuard)
 @Controller('workspace')
 export class WorkspaceController {
   constructor(private readonly workspaceService: WorkspaceService) {}
-   
+
+  @UseGuards(AccessGuard)
   @Post()
   create(@Body() createWorkspaceDto: CreateWorkspaceDto, @Req() req) {
     return this.workspaceService.createNewWorkSpace({...createWorkspaceDto, ownerId: req.user.userId});
   }
-
+  
   @Get()
   findAll( @Req() req) {
     return this.workspaceService.findAllWorkspaces({ownerId: req.user.userId});
   }
-
+  
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.workspaceService.findOneByCondition({id}, {projects: true});
   }
-
-  @Access(AccessLevel.OWNER, AccessLevel.MEMBER)
+  
+  @UseGuards(AccessGuard)
+  @Access(AccessLevel.OWNER)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateWorkspaceDto: UpdateWorkspaceDto) {
     return this.workspaceService.update(id, updateWorkspaceDto);
   }
-
-  @Access(AccessLevel.OWNER, AccessLevel.MEMBER)
+  
+  @UseGuards(AccessGuard)
+  @Access(AccessLevel.OWNER)
   @Delete(':id')
   deleteWorkspaceById(@Param('id') id: string) {
     return this.workspaceService.deleteWorkspaceById(id);
